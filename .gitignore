@@ -1,0 +1,32 @@
+# Variables de entorno — NUNCA subir al repositorio
+.env
+.env.local
+.env.production
+
+# Backend — Java/Maven/Spring Boot
+backend/target/
+backend/.mvn/
+backend/*.jar
+backend/*.war
+*.class
+*.log
+
+# Frontend — Node/React Native/Expo
+frontend/node_modules/
+frontend/.expo/
+frontend/dist/
+frontend/build/
+frontend/.eas/
+
+# IDEs
+.idea/
+*.iml
+.vscode/settings.json
+*.DS_Store
+
+# Docker
+*.pid
+
+# Logs
+logs/
+*.log
