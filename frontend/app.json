@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "EraMis",
+    "slug": "eramis",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "backgroundColor": "#000D3D",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000D3D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "EraMis necesita tu ubicación para mostrarte estudiantes cercanos.",
+        "NSCameraUsageDescription": "EraMis necesita acceso a la cámara para actualizar tu foto de perfil.",
+        "NSPhotoLibraryUsageDescription": "EraMis necesita acceso a tu galería para seleccionar tu foto de perfil."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000D3D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-location",
+      "expo-secure-store",
+      "expo-image-picker",
+      "expo-font",
+      "expo-image"
+    ]
+  }
+}
