@@ -46,7 +46,7 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 
 ## RA-PSP-3 — Programa mecanismos de comunicación en red empleando sockets e hilos
 
-**Estado:** 🟡 En progreso (se completará en fases posteriores)
+**Estado:** ✅ Completado
 
 ### Fase 2.1 — Implementación de JWT y Spring Security
 
@@ -56,7 +56,24 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 | CE 3.b | ✅ Cubierto | Protocolo de comunicación seguro basado en JWT (JSON Web Tokens) con `JwtUtil.java`. Token firmado con HMAC-SHA256, expiración configurable vía `jwt.expiration-ms`. Filtro `JwtAuthenticationFilter` intercepta cada petición HTTP, extrae y valida el Bearer token, y establece el contexto de seguridad. |
 | CE 3.f | ✅ Cubierto | Cadena de seguridad configurada en `SecurityConfig.java`: sesiones STATELESS (sin estado en servidor), endpoints públicos y protegidos definidos, `DaoAuthenticationProvider` con BCrypt para hash de contraseñas. Control de acceso diferenciado: `/api/auth/**` público, resto requiere token JWT. |
 
-**Archivos evidencia:** `BackendApplication.java`, `SecurityConfig.java`, `JwtUtil.java`, `JwtAuthenticationFilter.java`, `UserDetailsServiceImpl.java`, `AuthService.java`, `AuthController.java`, `CorsConfig.java`, `OpenApiConfig.java`, `GlobalExceptionHandler.java`
+**Archivos evidencia:** `BackendApplication.java`, `SecurityConfig.java`, `JwtUtil.java`, `JwtAuthenticationFilter.java`, `UserDetailsServiceImpl.java`, `AuthService.java`, `AuthController.java`, `CorsConfig.java`, `SwaggerConfig.java`, `GlobalExceptionHandler.java`
+
+### Fase 4.1 — Configuración WebSocket STOMP y chat en tiempo real
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 3.a | ✅ Cubierto | Servidor WebSocket configurado en `WebSocketConfig.java` con endpoint `/ws` (SockJS fallback). Broker STOMP con prefijos `/app` (application), `/topic` (broadcast) y `/user` (punto a punto). Protocolo STOMP 1.2 sobre WebSocket. |
+| CE 3.b | ✅ Cubierto | Protocolo STOMP implementado con destinos tipados: `/app/chat.send` (envío), `/topic/conversation.{id}` (recepción broadcast), `/topic/conversation.{id}.typing` (indicadores de escritura). Payloads JSON serializados automáticamente por Jackson. |
+| CE 3.c | ✅ Cubierto | Comunicación bidireccional full-duplex: cliente envía mensajes a `/app/chat.send` → servidor persiste y retransmite a `/topic/conversation.{id}` → todos los suscriptores reciben en tiempo real. Indicadores de typing implementados como canal separado. |
+| CE 3.d | ✅ Cubierto | Gestión de sesiones WebSocket con `OnlineUserRegistry.java` (ConcurrentHashMap thread-safe). `WebSocketEventListener.java` escucha eventos `SessionConnectEvent` y `SessionDisconnectEvent` para mantener registro actualizado de usuarios online. |
+| CE 3.e | ✅ Cubierto | Mensajes persistidos en tabla `messages` de MySQL via `ChatService.saveMessage()`. Historial recuperable con paginación vía endpoint REST `GET /api/chat/conversations/{id}/messages`. Conteo de mensajes no leídos por conversación. |
+| CE 3.f | ✅ Cubierto | Autenticación JWT validada en el handshake CONNECT de WebSocket mediante `ChannelInterceptor` en `WebSocketConfig.java`. Token Bearer extraído del header STOMP `Authorization`, validado con `JwtUtil`, y establecido como `UsernamePasswordAuthenticationToken` principal de la sesión. |
+| CE 3.g | ✅ Cubierto | `SimpMessagingTemplate` distribuye mensajes a todos los suscriptores de un canal STOMP. Patrón publish-subscribe: múltiples clientes suscritos a `/topic/conversation.{id}` reciben el mismo mensaje simultáneamente. |
+| CE 3.h | ✅ Cubierto | ConcurrentHashMap en `OnlineUserRegistry` garantiza acceso thread-safe desde múltiples hilos del pool de WebSocket. Spring gestiona hilos del broker con `SimpleBrokerMessageHandler` y pool de hilos para `clientInboundChannel`. |
+| CE 3.i | ✅ Cubierto | Validación de participante en `ChatService.verifyParticipant()`: solo usuarios que pertenecen a una conversación pueden enviar mensajes o leer historial. `UnauthorizedOperationException` (403) si intenta acceder a conversación ajena. |
+| CE 3.j | ✅ Cubierto | Marcado de mensajes como leídos via `PATCH /api/chat/conversations/{id}/read`. Conteo de no leídos con query optimizada `countUnreadMessages` en `MessageRepository`. Conversaciones ordenadas por último mensaje para priorizar las activas. |
+
+**Archivos evidencia:** `WebSocketConfig.java`, `OnlineUserRegistry.java`, `WebSocketEventListener.java`, `ChatMessagePayload.java`, `ChatController.java` (WS), `ChatService.java`, `ConversationController.java` (REST)
 
 **Decisiones técnicas documentadas:**
 - JWT stateless elegido frente a sesiones con estado para escalabilidad horizontal y compatibilidad con clientes móviles.
