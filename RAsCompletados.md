@@ -154,3 +154,33 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - Verificación de propiedad (`verifyReceiver`) para que solo el receptor pueda aceptar/rechazar solicitudes.
 
 ---
+
+## RA-PMDM-2 — Desarrolla interfaces gráficas de usuario utilizando los componentes visuales adecuados
+
+**Estado:** 🟡 En progreso (se completará en fases posteriores)
+
+### Fase 7.1 — Inicialización del proyecto React Native
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.a | ✅ Cubierto | Proyecto React Native (Expo SDK 55, TypeScript) inicializado con estructura modular: `src/constants/` (tokens de diseño), `src/components/` (componentes reutilizables), `src/screens/` (pantallas por dominio), `src/navigation/` (navegadores), `src/store/` (estado global Zustand), `src/types/` (interfaces TS). |
+| CE 2.i | ✅ Cubierto | Design system "European Glass" documentado con JSDoc en cada archivo: `colors.ts` (paleta completa con gradientes y estados), `typography.ts` (escala tipográfica Outfit/Inter), `spacing.ts` (escala de 4px), `glassmorphism.ts` (estilos base glass). |
+
+### Fase 7.2 — Componentes base del Design System
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.a | ✅ Cubierto | Componentes reutilizables implementados con props tipadas: `GlassButton` (3 variantes: primary/secondary/ghost con micro-animación Reanimated), `GlassCard` (BlurView + glassmorfismo), `GlassInput` (foco dorado + validación), `UserAvatar` (gradiente dorado-naranja + iniciales fallback), `InterestChip` (seleccionable), `EuroBgGradient` (fondo aurora boreal). |
+| CE 2.i | ✅ Cubierto | Cada componente documentado con JSDoc explicando su propósito, variantes y uso. Interfaces TypeScript (`GlassButtonProps`, `GlassCardProps`, `GlassInputProps`, `UserAvatarProps`, `InterestChipProps`) definen el contrato de cada componente. Sistema de navegación `AppNavigator` con flujo auth/main documentado. |
+
+**Archivos evidencia:** `colors.ts`, `typography.ts`, `spacing.ts`, `glassmorphism.ts`, `EuroBgGradient.tsx`, `GlassCard.tsx`, `GlassButton.tsx`, `GlassInput.tsx`, `UserAvatar.tsx`, `InterestChip.tsx`, `AppNavigator.tsx`, `authStore.ts`, `src/types/api.ts`
+
+**Decisiones técnicas documentadas:**
+- Expo SDK 55 con TypeScript para compatibilidad multiplataforma y tipado estricto.
+- Design system "European Glass" inspirado en la bandera de la UE: fondo midnight (#000D3D), acentos dorados (#FFCC00) y naranja (#FF6B2B).
+- Zustand como estado global por su simplicidad, rendimiento y compatibilidad con React Native sin boilerplate.
+- expo-secure-store para persistencia segura del JWT (cifrado nativo en iOS/Android).
+- react-native-reanimated para micro-animaciones de UI ejecutadas en el hilo nativo (60fps).
+- expo-blur para el efecto glassmorfismo real en las tarjetas.
+
+---
