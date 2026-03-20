@@ -19,6 +19,7 @@ import { UserProfileDetailScreen } from '../screens/discover/UserProfileDetailSc
 import { ChatListScreen } from '../screens/chat/ChatListScreen';
 import { ChatScreen } from '../screens/chat/ChatScreen';
 import { MyProfileScreen } from '../screens/profile/MyProfileScreen';
+import { EditProfileScreen } from '../screens/profile/EditProfileScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -88,6 +89,7 @@ export const AppNavigator = () => {
             <Stack.Screen name="InterestSelection" component={InterestSelectionScreen} />
             <Stack.Screen name="UserProfileDetail" component={UserProfileDetailScreen} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           </>
         )}
       </Stack.Navigator>
