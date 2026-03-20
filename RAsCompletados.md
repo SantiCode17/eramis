@@ -23,3 +23,23 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 **Archivos evidencia:** `.gitignore`, `README.md`, `RAsCompletados.md`, `.env.example`
 
 ---
+
+## RA-AD-2 — Desarrolla aplicaciones que gestionan información almacenada en bases de datos relacionales
+
+**Estado:** 🟡 En progreso (se completará en fases posteriores)
+
+### Fase 0.2 — Diseño del modelo Entidad-Relación
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.e | ✅ Cubierto | Estructura completa de la base de datos diseñada: 5 tablas principales (`users`, `interests`, `connections`, `conversations`, `messages`) + 1 tabla pivote (`user_interests`). Tipos de datos, restricciones NOT NULL, UNIQUE, claves foráneas con ON DELETE CASCADE, ENUMs para estados y roles. Documentado en `docs/er-diagram.md`. |
+
+**Archivos evidencia:** `docs/er-diagram.md`
+
+**Decisiones técnicas documentadas:**
+- Relación N:M usuarios-intereses implementada con tabla pivote para integridad referencial y consultas eficientes.
+- ENUM para `connections.status` limita estados válidos a nivel de BD.
+- Convención `user1_id < user2_id` en conversaciones para garantizar unicidad.
+- Coordenadas como DOUBLE para cálculos de distancia con fórmula de Haversine.
+
+---
