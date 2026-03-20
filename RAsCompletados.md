@@ -43,3 +43,26 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - Coordenadas como DOUBLE para cálculos de distancia con fórmula de Haversine.
 
 ---
+
+## RA-PSP-3 — Programa mecanismos de comunicación en red empleando sockets e hilos
+
+**Estado:** 🟡 En progreso (se completará en fases posteriores)
+
+### Fase 2.1 — Implementación de JWT y Spring Security
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 3.a | ✅ Cubierto | Servidor HTTP implementado con Spring Boot 3.3.5 (`BackendApplication.java`). Endpoints REST `/api/auth/register` (POST, 201) y `/api/auth/login` (POST, 200) operativos con validación de entrada (`@Valid`). Configuración de CORS habilitada para peticiones cross-origin. |
+| CE 3.b | ✅ Cubierto | Protocolo de comunicación seguro basado en JWT (JSON Web Tokens) con `JwtUtil.java`. Token firmado con HMAC-SHA256, expiración configurable vía `jwt.expiration-ms`. Filtro `JwtAuthenticationFilter` intercepta cada petición HTTP, extrae y valida el Bearer token, y establece el contexto de seguridad. |
+| CE 3.f | ✅ Cubierto | Cadena de seguridad configurada en `SecurityConfig.java`: sesiones STATELESS (sin estado en servidor), endpoints públicos y protegidos definidos, `DaoAuthenticationProvider` con BCrypt para hash de contraseñas. Control de acceso diferenciado: `/api/auth/**` público, resto requiere token JWT. |
+
+**Archivos evidencia:** `BackendApplication.java`, `SecurityConfig.java`, `JwtUtil.java`, `JwtAuthenticationFilter.java`, `UserDetailsServiceImpl.java`, `AuthService.java`, `AuthController.java`, `CorsConfig.java`, `OpenApiConfig.java`, `GlobalExceptionHandler.java`
+
+**Decisiones técnicas documentadas:**
+- JWT stateless elegido frente a sesiones con estado para escalabilidad horizontal y compatibilidad con clientes móviles.
+- BCrypt como algoritmo de hash: resistente a ataques de fuerza bruta gracias a su factor de trabajo adaptable.
+- `OncePerRequestFilter` garantiza que cada petición se valida exactamente una vez en el pipeline de Spring Security.
+- Excepciones personalizadas (`EmailAlreadyExistsException`, `InvalidCredentialsException`) capturadas por `GlobalExceptionHandler` para respuestas HTTP consistentes con códigos 400/401/404/409.
+- Flyway como gestor de migraciones para versionado reproducible del esquema de base de datos.
+
+---

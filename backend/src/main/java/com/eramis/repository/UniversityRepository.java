@@ -1,0 +1,16 @@
+package com.eramis.repository;
+
+import com.eramis.entity.University;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+/**
+ * Repositorio de acceso a datos para la entidad {@link University}.
+ */
+@Repository
+public interface UniversityRepository extends JpaRepository<University, Long> {
+
+    Optional<University> findByName(String name);
+}
