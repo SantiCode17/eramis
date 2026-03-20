@@ -10,18 +10,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuración de SpringDoc OpenAPI para la documentación automática de la API.
- * Incluye esquema de seguridad JWT Bearer para pruebas desde Swagger UI.
+ * Configuración de Swagger/OpenAPI para documentación interactiva de la API.
+ *
+ * <p>Define la información general del proyecto, el esquema de seguridad JWT Bearer
+ * y expone la UI en {@code /swagger-ui/index.html}.</p>
  */
 @Configuration
-public class OpenApiConfig {
+public class SwaggerConfig {
 
+    /**
+     * Bean de configuración de OpenAPI con información del proyecto y esquema JWT.
+     */
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("EraMis API")
-                        .description("API REST para EraMis — Social App for Erasmus Students")
+                        .description("Backend API para la aplicación EraMis — Connecting Erasmus Students")
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Santiago Sánchez March")
@@ -31,7 +36,7 @@ public class OpenApiConfig {
                         .addSecuritySchemes("Bearer Authentication",
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
-                                        .bearerFormat("JWT")
-                                        .scheme("bearer")));
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")));
     }
 }

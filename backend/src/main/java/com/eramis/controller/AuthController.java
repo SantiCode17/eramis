@@ -4,11 +4,9 @@ import com.eramis.dto.AuthResponse;
 import com.eramis.dto.LoginRequest;
 import com.eramis.dto.RegisterRequest;
 import com.eramis.dto.UserProfileResponse;
-import com.eramis.dto.InterestResponse;
 import com.eramis.entity.User;
-import com.eramis.exception.UserNotFoundException;
-import com.eramis.repository.UserRepository;
 import com.eramis.service.AuthService;
+import com.eramis.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,9 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 /**
  * Controlador REST para autenticación: registro, login y consulta del perfil actual.
@@ -34,7 +29,7 @@ import java.util.stream.Collectors;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * Registra un nuevo usuario y devuelve un token JWT.
@@ -60,33 +55,6 @@ public class AuthController {
     @GetMapping("/me")
     @Operation(summary = "Obtener perfil del usuario autenticado")
     public ResponseEntity<UserProfileResponse> getCurrentUser(@AuthenticationPrincipal User currentUser) {
-        User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado: " + currentUser.getId()));
-
-        UserProfileResponse response = UserProfileResponse.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .bio(user.getBio())
-                .profilePhoto(user.getProfilePhoto())
-                .universityName(user.getUniversity() != null ? user.getUniversity().getName() : null)
-                .faculty(user.getFaculty())
-                .homeCountry(user.getHomeCountry())
-                .erasmusCity(user.getErasmusCity())
-                .interests(user.getInterests() != null
-                        ? user.getInterests().stream()
-                            .map(i -> InterestResponse.builder()
-                                    .id(i.getId())
-                                    .name(i.getName())
-                                    .icon(i.getIcon())
-                                    .build())
-                            .collect(Collectors.toList())
-                        : Collections.emptyList())
-                .isVisible(user.getIsVisible())
-                .createdAt(user.getCreatedAt())
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.getMyProfile(currentUser));
     }
 }
