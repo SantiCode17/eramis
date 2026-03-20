@@ -11,7 +11,7 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 
 ## RA-ED-4 — Optimiza código empleando las herramientas disponibles en el entorno de desarrollo
 
-**Estado:** 🟡 En progreso (se completará en fases posteriores)
+**Estado:** ✅ Completado
 
 ### Fase 0.1 — Inicialización del repositorio
 
@@ -21,6 +21,26 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 | CE 4.h | ✅ Cubierto | Repositorio remoto configurado en `https://github.com/SantiCode17/eramis.git`. Push a `origin/main` y `origin/feature/project-setup`. Trabajo colaborativo habilitado con estructura de ramas documentada en README.md. |
 
 **Archivos evidencia:** `.gitignore`, `README.md`, `RAsCompletados.md`, `.env.example`
+
+### Fase 5.1 — Tests unitarios y CI
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 4.a | ✅ Cubierto | Tests unitarios escritos con JUnit 5 y Mockito: `AuthServiceTest.java` (4 tests) y `ConnectionServiceTest.java` (6 tests). Uso de `@ExtendWith(MockitoExtension.class)`, `@Mock`, `@InjectMocks`, y AssertJ para aserciones fluidas. Total: 10 tests, 0 fallos. |
+| CE 4.b | ✅ Cubierto | Refactorización validada por tests: `AuthService.register()`, `AuthService.login()`, `ConnectionService.sendConnectionRequest()` y `ConnectionService.acceptConnection()` cubiertos con tests que verifican tanto el camino exitoso como los flujos de error (excepciones esperadas). |
+| CE 4.c | ✅ Cubierto | Código revisado y testeado con herramientas del IDE: ejecución local `mvn test` con 10/10 tests en verde. Integración continua configurada con GitHub Actions para ejecución automática en cada push. |
+| CE 4.d | ✅ Cubierto | Tests de comportamiento esperado vs excepcional: `register_withValidData_returnsAuthResponse` (éxito), `register_withDuplicateEmail_throwsException` (excepción), `login_withInvalidCredentials_throwsException` (excepción), `sendConnectionRequest_toSelf_throwsException` (excepción), `acceptConnection_byRequester_throwsUnauthorizedException` (autorización). |
+| CE 4.e | ✅ Cubierto | Documentación de tests con `@DisplayName` descriptivos en español, Javadoc en cada método de test explicando qué verifica, convención de nombrado `método_condición_resultado` para legibilidad. |
+| CE 4.g | ✅ Cubierto | Pipeline CI/CD configurado en `.github/workflows/ci.yml`: build y test automáticos en push a `main` y `feature/*`. Servicio MySQL 8.0 como contenedor de servicio, Java 21 Temurin con caché Maven, artefactos de resultados subidos con `upload-artifact@v4`. |
+| CE 4.i | ✅ Cubierto | Dependencias de test gestionadas via `spring-boot-starter-test` (JUnit 5, Mockito, AssertJ). Mocks inyectados con `@Mock` para aislar servicios de repositorios e infraestructura. Verificación de interacciones con `verify()` y `never()`. |
+
+**Archivos evidencia:** `AuthServiceTest.java`, `ConnectionServiceTest.java`, `.github/workflows/ci.yml`
+
+**Decisiones técnicas documentadas:**
+- Mockito elegido para aislamiento de dependencias: los tests unitarios no requieren base de datos ni contexto de Spring.
+- AssertJ como librería de aserciones por su API fluida y mensajes de error descriptivos.
+- GitHub Actions con contenedor MySQL de servicio para reproducibilidad del entorno de CI.
+- Convención `@DisplayName` en español para alinear con la documentación del proyecto.
 
 ---
 
