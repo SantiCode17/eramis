@@ -221,4 +221,25 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - `UserProfileDetailScreen` recibe `UserSummaryResponse` como param de navegación para renderizado inmediato, y carga `UserProfileResponse` completo en segundo plano.
 - Componente `UserCard` encapsula la lógica de `POST /api/connections` con estados de loading/sent para feedback inmediato al usuario.
 
+### Fase 10.1 — Pantallas de chat WebSocket en tiempo real
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.c | ✅ Cubierto | `useWebSocket.ts` establece conexión inalámbrica bidireccional via WebSocket STOMP con SockJS como transporte. Suscripción a `/topic/conversation.{id}` para mensajes y `/topic/conversation.{id}.typing` para indicadores de escritura. Reconexión automática cada 5s. JWT enviado en headers STOMP CONNECT para autenticación del handshake. |
+| CE 2.d | ✅ Cubierto | `ChatScreen.tsx` con burbujas animadas: gradiente dorado (`LinearGradient`) para mensajes enviados, glass blanco semitransparente para recibidos. Auto-scroll al último mensaje. Indicador de typing con texto en cursiva y puntos dorados. |
+| CE 2.e | ✅ Cubierto | `chatApi.ts` consume endpoints REST del backend: `GET /api/chat/conversations` (lista), `GET /api/chat/conversations/{id}/messages` (historial paginado, page/size), `PATCH /api/chat/conversations/{id}/read` (marcar leídos). Integración completa con `apiClient` (JWT automático). |
+| CE 2.f | ✅ Cubierto | `ChatListScreen.tsx` persiste estado local de conversaciones con `useState` + `useFocusEffect` para recargar al recibir foco. `ChatScreen.tsx` gestiona historial de mensajes con paginación infinita (scroll up carga más antiguos). Pull-to-refresh en lista de chats. |
+| CE 2.g | ✅ Cubierto | Tipos TypeScript reutilizados: `ConversationResponse`, `MessageResponse`, `UserSummaryResponse` de `types/api.ts`. Hook `useWebSocket` con interfaz `UseWebSocketOptions` tipada. Parámetros de navegación tipados con `RouteProp`. |
+| CE 2.h | ✅ Cubierto | Iconos Phosphor en ChatScreen: `PaperPlaneRight` (envío), `CaretLeft` (volver). Timestamps relativos con dayjs (`fromNow()`) en locale español. Badge naranja de no leídos con `energyOrange`. |
+
+**Archivos evidencia:** `chatApi.ts`, `useWebSocket.ts`, `ChatListScreen.tsx`, `ChatScreen.tsx`, `AppNavigator.tsx`
+
+**Decisiones técnicas documentadas:**
+- @stomp/stompjs + sockjs-client como stack de WebSocket: STOMP proporciona pub/sub tipado y SockJS garantiza fallback HTTP en entornos sin soporte nativo WS.
+- Reconexión automática (5s) para resiliencia ante desconexiones de red móvil.
+- Historial paginado (50 mensajes/página) para evitar cargar conversaciones completas en memoria.
+- `useFocusEffect` en ChatListScreen para refrescar la lista al volver de ChatScreen, reflejando mensajes nuevos y conteo de no leídos actualizado.
+- Indicador de typing con timeout de 3s: el backend retransmite el userId al canal `.typing`, el frontend lo muestra temporalmente.
+- Burbujas con esquina asimétrica (borderBottomRightRadius: 4 / borderBottomLeftRadius: 4) para distinguir visualmente emisor y receptor.
+
 ---
