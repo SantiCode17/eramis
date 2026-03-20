@@ -1,7 +1,27 @@
 /**
- * Tipos de respuesta de la API backend de EraMis.
+ * Tipos de la API backend de EraMis.
  * Corresponden a los DTOs del backend Java.
  */
+
+/* ─────────── REQUEST DTOs ─────────── */
+
+/** Credenciales para iniciar sesión. */
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+/** Datos del formulario de registro de un nuevo usuario. */
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  homeCountry: string;
+  universityId?: number;
+}
+
+/* ─────────── RESPONSE DTOs ─────────── */
 
 /** Resumen de un interés del catálogo. */
 export interface InterestResponse {

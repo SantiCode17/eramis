@@ -183,4 +183,25 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - react-native-reanimated para micro-animaciones de UI ejecutadas en el hilo nativo (60fps).
 - expo-blur para el efecto glassmorfismo real en las tarjetas.
 
+### Fase 8.1-8.2 — Splash, Onboarding, Auth Screens y conexión API
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.b | ✅ Cubierto | Pantallas de autenticación funcionales: `LoginScreen.tsx` con validación de campos (email regex, mínimo 6 caracteres password), estados de error inline, ActivityIndicator durante carga, Alert nativo para errores del backend. `RegisterScreen.tsx` con formulario completo (6 campos), modal de selección de universidad conectado al catálogo `/api/catalog/universities`. |
+| CE 2.c | ✅ Cubierto | Navegación condicional implementada en `AppNavigator.tsx`: SplashScreen (isLoading), flujo auth (Onboarding→Login→Register) cuando `!isAuthenticated`, MainTabs + InterestSelection cuando autenticado. Transiciones entre stacks automáticas al cambiar estado del store. |
+| CE 2.d | ✅ Cubierto | `SplashScreen.tsx` con animaciones RN Animated: fade-in + spring scale del logo, aparición secuencial de 12 estrellas europeas (stagger 80ms), rotación continua del anillo (20s loop). `OnboardingScreen.tsx` con FlatList horizontal paginada y 3 slides con iconos Phosphor (duotone). |
+| CE 2.e | ✅ Cubierto | Conexión con API REST via `apiClient.ts` (Axios): interceptor de request adjunta JWT desde SecureStore, interceptor de response captura 401 y elimina token expirado. `authApi.ts` consume `/auth/register` y `/auth/login`. Timeout de 15s configurado. |
+| CE 2.f | ✅ Cubierto | `InterestSelectionScreen.tsx` permite seleccionar intereses del catálogo (`/api/catalog/interests`) con grid de `InterestChip` reutilizables. Validación de mínimo 3 seleccionados. PUT a `/api/users/me/interests` al confirmar. Opción "Skip for now" disponible. |
+| CE 2.g | ✅ Cubierto | Tipos TypeScript añadidos para requests: `LoginRequest`, `RegisterRequest` en `types/api.ts`. Componentes tipados con `React.FC` e interfaces de props. `AxiosError<T>` genérico para tipado de errores de API. |
+| CE 2.h | ✅ Cubierto | Iconos Phosphor integrados en BottomTabs (`House`, `ChatCircleDots`, `UserCircle` con weight "fill") y en slides del onboarding (`UsersThree`, `MagnifyingGlass`, `ChatCircleDots` con weight "duotone"). Barra de tabs con glassmorfismo y colores del design system. |
+
+**Archivos evidencia:** `SplashScreen.tsx`, `OnboardingScreen.tsx`, `InterestSelectionScreen.tsx`, `LoginScreen.tsx`, `RegisterScreen.tsx`, `apiClient.ts`, `authApi.ts`, `api.ts` (types), `AppNavigator.tsx`
+
+**Decisiones técnicas documentadas:**
+- Axios elegido como cliente HTTP por su soporte nativo de interceptores (JWT auto-attach y manejo de 401).
+- `__DEV__` flag para conmutar BASE_URL entre emulador (10.0.2.2) y producción sin hardcoding.
+- Animaciones con RN Animated API nativa (useNativeDriver: true) para rendimiento en hilo de UI separado.
+- Modal nativo de RN para selector de universidades en lugar de dependencia externa de picker.
+- InterestSelection colocada en el stack autenticado para que el usuario pueda acceder tras registro.
+
 ---
