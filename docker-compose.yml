@@ -1,0 +1,53 @@
+version: '3.8'
+
+networks:
+  eramis-network:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: eramis-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_changeme}
+      MYSQL_DATABASE: ${DB_NAME:-eramis_db}
+      MYSQL_USER: ${DB_USER:-eramis_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - eramis-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_changeme}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: eramis-backend
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-eramis_db}
+      DB_USER: ${DB_USER:-eramis_user}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      JWT_SECRET: ${JWT_SECRET:-changeme_min_32_chars_key_here_x}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-604800000}
+      SPRING_PROFILE: dev
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - eramis-network
+    restart: on-failure
+
+volumes:
+  mysql_data:
+    driver: local

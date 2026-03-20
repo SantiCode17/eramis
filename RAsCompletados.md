@@ -44,6 +44,25 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 
 ---
 
+## RA-NUBE-3 — Despliega y gestiona servicios en contenedores
+
+**Estado:** 🟡 Parcialmente completado
+
+### Fase 6.1 — Docker Compose para desarrollo local
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 3.c | ✅ Cubierto | Se ha añadido un `Dockerfile` multi-stage en `backend/Dockerfile` que construye la aplicación con Maven y produce una imagen de runtime basada en `eclipse-temurin:21-jre-alpine` para reducir tamaño de imagen. |
+| CE 3.d | ✅ Cubierto | Se ha creado `docker-compose.yml` para levantar el entorno local (MySQL 8.0 + backend) y `docker-compose.prod.yml` para despliegue en entornos de producción simplificados. El `docker-compose.yml` incluye healthcheck para MySQL, volumen persistente `mysql_data` y red `eramis-network`. |
+
+**Archivos evidencia:** `backend/Dockerfile`, `docker-compose.yml`, `docker-compose.prod.yml`
+
+**Notas:**
+- La verificación final (arranque de contenedores, ejecución de Flyway y persistencia del volumen) requiere ejecutar `docker-compose up -d` localmente. Si el usuario tiene restricciones de permisos en GitHub Actions para flujos de trabajo, los archivos están en la rama `feature/docker-compose` y pueden subirse cuando el PAT disponga del scope `workflow`.
+
+
+---
+
 ## RA-AD-2 — Desarrolla aplicaciones que gestionan información almacenada en bases de datos relacionales
 
 **Estado:** 🟡 En progreso (se completará en fases posteriores)
