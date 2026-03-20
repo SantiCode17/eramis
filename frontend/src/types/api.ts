@@ -21,6 +21,18 @@ export interface RegisterRequest {
   universityId?: number;
 }
 
+/** Actualización de ubicación geográfica del usuario. */
+export interface LocationUpdateRequest {
+  latitude: number;
+  longitude: number;
+}
+
+/** Solicitud de conexión a otro usuario. */
+export interface ConnectionRequest {
+  receiverId: number;
+  status?: string;
+}
+
 /* ─────────── RESPONSE DTOs ─────────── */
 
 /** Resumen de un interés del catálogo. */
@@ -40,6 +52,7 @@ export interface UserSummaryResponse {
   universityName: string | null;
   homeCountry: string | null;
   interests: InterestResponse[];
+  distanceKm: number | null;
 }
 
 /** Respuesta de autenticación (login/register). */
