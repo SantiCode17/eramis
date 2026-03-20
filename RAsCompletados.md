@@ -66,3 +66,35 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - Flyway como gestor de migraciones para versionado reproducible del esquema de base de datos.
 
 ---
+
+## RA-AD-2 — Desarrolla aplicaciones que gestionan información almacenada en bases de datos relacionales (continuación)
+
+**Estado:** 🟡 En progreso (se completará en fases posteriores)
+
+### Fase 3.1 — Gestión de perfiles y catálogos
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.a | ✅ Cubierto | Operaciones CRUD completas sobre la entidad `User` mediante `UserService.java`: consulta de perfil (`getUserProfile`, `getMyProfile`), actualización parcial (`updateProfile`), actualización de ubicación (`updateLocation`), y gestión de intereses (`updateInterests`). Catálogos públicos de universidades e intereses en `CatalogController.java`. |
+| CE 2.b | ✅ Cubierto | Transacciones gestionadas con `@Transactional` en métodos de escritura y `@Transactional(readOnly = true)` en consultas de solo lectura, garantizando integridad de datos y optimización de rendimiento en `UserService.java`. |
+| CE 2.c | ✅ Cubierto | Relaciones JPA implementadas: `@ManyToMany` (User ↔ Interest via `user_interests`), `@OneToOne` (User ↔ UserLocation), `@ManyToOne` (User → University). Actualización del set completo de intereses con reemplazo atómico. |
+
+**Archivos evidencia:** `UserService.java`, `UserController.java`, `CatalogController.java`, `SwaggerConfig.java`, `AuthUtils.java`
+
+### Fase 3.2 — Algoritmo de matching y conexiones
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.d | ✅ Cubierto | Stored procedure `find_nearby_users` (V4 Flyway) implementa la fórmula de Haversine para cálculo de distancia geográfica en SQL. Invocado desde `DiscoverService.java` mediante `EntityManager.createNativeQuery()` para consultas nativas. |
+| CE 2.e | ✅ Cubierto | Modelo de datos ampliado con stored procedure `find_nearby_users` que excluye automáticamente conexiones ACCEPTED y usuarios no visibles. Restricciones UNIQUE en conexiones y conversaciones a nivel de BD. |
+
+**Archivos evidencia:** `V4__find_nearby_users_procedure.sql`, `DiscoverService.java`, `ConnectionService.java`, `DiscoverController.java`, `ConnectionController.java`, `DuplicateConnectionException.java`, `SelfConnectionException.java`
+
+**Decisiones técnicas documentadas:**
+- Algoritmo de matching dual: proximidad geográfica (stored procedure) cuando hay ubicación, fallback a usuarios visibles recientes cuando no.
+- Stored procedure `find_nearby_users` elegido para optimizar el cálculo de distancia en la BD y reducir transferencia de datos.
+- Creación automática de `Conversation` al aceptar conexión con convención `user1_id < user2_id` para unicidad.
+- Excepciones `DuplicateConnectionException` (409) y `SelfConnectionException` (400) para validaciones de negocio específicas.
+- Verificación de propiedad (`verifyReceiver`) para que solo el receptor pueda aceptar/rechazar solicitudes.
+
+---
