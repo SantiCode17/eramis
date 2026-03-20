@@ -33,6 +33,22 @@ export interface ConnectionRequest {
   status?: string;
 }
 
+/** Actualización de perfil del usuario autenticado. */
+export interface UpdateProfileRequest {
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  profilePhoto?: string;
+  universityId?: number;
+  faculty?: string;
+  erasmusCity?: string;
+}
+
+/** Actualización de la lista completa de intereses del usuario. */
+export interface InterestsUpdateRequest {
+  interestIds: number[];
+}
+
 /* ─────────── RESPONSE DTOs ─────────── */
 
 /** Resumen de un interés del catálogo. */

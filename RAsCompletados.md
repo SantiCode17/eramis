@@ -242,4 +242,22 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - Indicador de typing con timeout de 3s: el backend retransmite el userId al canal `.typing`, el frontend lo muestra temporalmente.
 - Burbujas con esquina asimétrica (borderBottomRightRadius: 4 / borderBottomLeftRadius: 4) para distinguir visualmente emisor y receptor.
 
+### Fase 11.1 — Pantallas de perfil propio
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.g | ✅ Cubierto | Tipos TypeScript para edición de perfil: `UpdateProfileRequest` (7 campos opcionales) e `InterestsUpdateRequest` (array de IDs) añadidos a `types/api.ts`. `userApi.ts` ampliado con `updateMyProfile`, `updateMyInterests`, `getUniversities`, `getInterests` — todos tipados con interfaces genéricas de Axios. Hook `usePermissions` con retorno tipado (`cameraGranted`, `galleryGranted`, funciones async → `Promise<boolean>`). |
+| CE 2.h | ✅ Cubierto | Iconos Phosphor en MyProfileScreen: `Camera` (superpuesto al avatar), `SignOut` (cerrar sesión), `MapPin` (ciudad Erasmus), `GraduationCap` (universidad), `Flag` (país). EditProfileScreen: `CaretLeft` (volver), `Camera` (tomar foto), `ImageSquare` (galería). Componentes del design system reutilizados: `GlassCard`, `GlassButton` (primary/secondary/ghost), `GlassInput`, `InterestChip`, `EuroBgGradient`, `UserAvatar`. |
+| CE 2.j | ✅ Cubierto | `usePermissions.ts` gestiona permisos de cámara y galería con `expo-image-picker`: solicita permisos con `Alert.alert()` explicativo previo, valida estado del permiso con `getCameraPermissionsAsync()` / `getMediaLibraryPermissionsAsync()`, y ofrece `Linking.openSettings()` si el permiso fue denegado permanentemente. `EditProfileScreen` usa `ImagePicker.launchCameraAsync()` y `ImagePicker.launchImageLibraryAsync()` con edición cuadrada (aspect 1:1, quality 0.8). |
+
+**Archivos evidencia:** `MyProfileScreen.tsx`, `EditProfileScreen.tsx`, `usePermissions.ts`, `userApi.ts`, `api.ts` (types actualizados), `AppNavigator.tsx`
+
+**Decisiones técnicas documentadas:**
+- `useFocusEffect` en MyProfileScreen para recargar datos tras volver de EditProfileScreen, reflejando cambios inmediatamente.
+- Modal bottom-sheet nativo para selección de universidad y fuente de foto (cámara/galería) sin dependencias externas.
+- expo-image-picker elegido por su API unificada para cámara y galería, compatible con Expo managed workflow.
+- Alert explicativo previo a la solicitud de permiso (patrón "pre-permission") para aumentar la tasa de aceptación.
+- `clearAuth()` de Zustand elimina token de SecureStore y resetea `isAuthenticated`, lo que dispara la navegación automática al flujo de onboarding gracias a la condición reactiva en AppNavigator.
+- Campos opcionales en `UpdateProfileRequest` permiten actualización parcial sin enviar todos los campos.
+
 ---
