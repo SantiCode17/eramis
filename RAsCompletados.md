@@ -204,4 +204,21 @@ en el proyecto EraMis y la evidencia concreta de su implementación.
 - Modal nativo de RN para selector de universidades en lugar de dependencia externa de picker.
 - InterestSelection colocada en el stack autenticado para que el usuario pueda acceder tras registro.
 
+### Fase 9.1 — Pantalla de descubrimiento
+
+| CE | Estado | Evidencia |
+|---|---|---|
+| CE 2.d | ✅ Cubierto | Hook `useLocation.ts` solicita permisos de geolocalización en primer plano vía `expo-location` (`requestForegroundPermissionsAsync`), obtiene coordenadas con precisión `Balanced` y las sincroniza con el backend (`PATCH /users/me/location`) para habilitar el matching por proximidad. Distancia mostrada en `UserCard` y `UserProfileDetailScreen` formateada desde `distanceKm`. |
+| CE 2.e | ✅ Cubierto | `userApi.ts` implementa capa de comunicación HTTP con el backend: `discover()` consume `GET /api/discover` con parámetros de filtro (distancia, universidad, intereses), `sendConnectionRequest()` envía `POST /api/connections`, `getProfile()` consume `GET /api/users/{id}`. Tipos `LocationUpdateRequest` y `ConnectionRequest` añadidos a `api.ts`. |
+| CE 2.f | ✅ Cubierto | `DiscoverScreen.tsx` persiste estado local con `useState` (usuarios, filtros, búsqueda). `UserCard` mantiene estado de envío de solicitud (`sent`/`sending`). Pull-to-refresh con `RefreshControl` para recargar datos. Datos del `UserSummaryResponse` incluyendo `distanceKm` consumidos directamente de la respuesta del backend. |
+
+**Archivos evidencia:** `useLocation.ts`, `userApi.ts`, `UserCard.tsx`, `DiscoverScreen.tsx`, `UserProfileDetailScreen.tsx`, `AppNavigator.tsx`, `api.ts` (types actualizados)
+
+**Decisiones técnicas documentadas:**
+- Skeleton screens con `Animated.loop` (pulso de opacidad 0.3→0.6) para feedback visual durante carga sin dependencias externas.
+- Filtrado local por nombre/universidad en barra de búsqueda para evitar peticiones al backend en cada keystroke.
+- Filtro de distancia con opciones predefinidas (5/10/25/50/100 km / Any) que recarga desde el backend con query param `maxDistanceKm`.
+- `UserProfileDetailScreen` recibe `UserSummaryResponse` como param de navegación para renderizado inmediato, y carga `UserProfileResponse` completo en segundo plano.
+- Componente `UserCard` encapsula la lógica de `POST /api/connections` con estados de loading/sent para feedback inmediato al usuario.
+
 ---

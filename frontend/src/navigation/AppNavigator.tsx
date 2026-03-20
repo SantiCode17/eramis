@@ -15,6 +15,7 @@ import { RegisterScreen } from '../screens/auth/RegisterScreen';
 
 // Pantallas principales
 import { DiscoverScreen } from '../screens/discover/DiscoverScreen';
+import { UserProfileDetailScreen } from '../screens/discover/UserProfileDetailScreen';
 import { ChatListScreen } from '../screens/chat/ChatListScreen';
 import { MyProfileScreen } from '../screens/profile/MyProfileScreen';
 
@@ -84,6 +85,7 @@ export const AppNavigator = () => {
           <>
             <Stack.Screen name="Main" component={MainTabs} />
             <Stack.Screen name="InterestSelection" component={InterestSelectionScreen} />
+            <Stack.Screen name="UserProfileDetail" component={UserProfileDetailScreen} />
           </>
         )}
       </Stack.Navigator>
